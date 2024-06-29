@@ -30,6 +30,7 @@ import { RemoveTrackingRoute } from "./src/infra/api/express/routes/tracking/rem
 import { UpdateUserPictureRoute } from "./src/infra/api/express/routes/user/update-user-picture.express.route";
 import { UpdateUserPictureUsecase } from "./src/usecases/user/update-user-picture.usecase";
 import { Upload } from "./src/helpers/Upload";
+import { UserLogoutRoute } from "./src/infra/api/express/routes/user/user-logout.express.route";
 
 (() => {
     const validator = Validator.create();
@@ -58,6 +59,7 @@ import { Upload } from "./src/helpers/Upload";
 
     const createUserRoute = CreateUserRoute.create(createUserUsecase, createSessionUsecase, validator, crypto);
     const loginRoute = UserLoginRoute.create(getUserByEmailUsecase, createSessionUsecase, validator, crypto);
+    const logoutRoute = UserLogoutRoute.create(removeSessionUsecase);
     const userProfile = UserProfileRoute.create(getUserByIdUsecase, getSessionByIdUsecase);
     const upateUserProfileRoute = UpdateUserProfileRoute.create(updateUserProfileUsecase, getSessionByIdUsecase, validator, crypto);
     const updateUserPictureRoute = UpdateUserPictureRoute.create(updateUserPictureUsecase, getSessionByIdUsecase, validator, upload);
@@ -70,7 +72,8 @@ import { Upload } from "./src/helpers/Upload";
 
     const api = ApiExpress.create([
         createUserRoute, 
-        loginRoute, 
+        loginRoute,
+        logoutRoute,
         userProfile,
         upateUserProfileRoute,
         updateUserPictureRoute,
