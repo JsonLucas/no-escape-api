@@ -5,21 +5,24 @@ import { trackingSchema } from "../../../../../utils/schema";
 import { CreateTrackingUsecase } from "../../../../../usecases/tracking/create-tracking.usecase";
 import { GetSessionByIdUsecase } from "../../../../../usecases/session/get-session-by-id.usecase";
 import { UNSUPPORTED_OBJECT } from "../../../../../utils/httpResponse";
+import { GetAllTrackingsUsecase } from "../../../../../usecases/tracking/get-all-trackings.usecase";
 
 export class CreateTrackingRoute implements IRoute {
     private constructor(
         private readonly path: string,
         private readonly method: HttpMethod,
         private readonly createTrackingService: CreateTrackingUsecase,
+        private readonly getAllTrackingsService: GetAllTrackingsUsecase,
         private readonly getSessionService: GetSessionByIdUsecase,
         private readonly validator: Validator
     ) {}
 
-    public static create(createTrackingService: CreateTrackingUsecase, getSessionService: GetSessionByIdUsecase, validator: Validator) {
+    public static create(createTrackingService: CreateTrackingUsecase, getAllTrackingsService: GetAllTrackingsUsecase, getSessionService: GetSessionByIdUsecase, validator: Validator) {
         return new CreateTrackingRoute(
             "/tracking",
             HttpMethod.POST,
             createTrackingService,
+            getAllTrackingsService,
             getSessionService,
             validator
         );
@@ -36,6 +39,9 @@ export class CreateTrackingRoute implements IRoute {
 
             const session = await this.getSessionService.execute({ id: sessionId.toString() });
             if(!session.userId) return res.status(404).send({ message: 'Session not found.' });
+
+            const allTrackings = await this.getAllTrackingsService.execute({ userId: session.userId });
+            if(allTrackings.some((item) => item.vehiclePlate === body.vehiclePlate)) return res.status(409).send({ message: 'You already have a vehicle with this plate.' });
 
             await this.createTrackingService.execute({ ...req.body, userId: session.userId });
 

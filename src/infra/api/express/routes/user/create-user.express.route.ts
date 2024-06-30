@@ -33,15 +33,22 @@ export class CreateUserRoute implements IRoute {
             const { body } = req;
             const validator = await this.validator.validate(createUserSchema, body);
             if(!validator) return res.status(422).send({ message: 'Invalid object format.' });
-            
-            const { name, email, phone, password } = body;
-            const encryptPassword = this.crypto.encrypt(password);
-            
-            const input: UserInputDTO = { name, email, phone, password: encryptPassword };
-            const output: UserOutputDTO = await this.createUserService.execute(input);
-            const session = await this.createSessionService.execute({ userId: output.id });
+            try{
+                const { name, email, phone, password } = body;
+                const encryptPassword = this.crypto.encrypt(password);
+                
+                const input: UserInputDTO = { name, email, phone, password: encryptPassword };
+                const output: UserOutputDTO = await this.createUserService.execute(input);
+                const session = await this.createSessionService.execute({ userId: output.id });
 
-            res.status(201).send({ message: 'User successfuly created!', session: session.id });
+                res.status(201).send({ message: 'User successfuly created!', session: session.id });
+            } catch(e: any) {
+                console.log(e);
+                let errorMessage = "Internal server error. Contact the support for more details.";
+                if(e.code === "P2002") return res.status(409).send({ message: 'This user is already in use.' });
+                
+                res.status(500).send({ message: errorMessage });
+            }
         };
     }
 

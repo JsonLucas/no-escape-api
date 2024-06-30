@@ -64,10 +64,10 @@ import { UserLogoutRoute } from "./src/infra/api/express/routes/user/user-logout
     const upateUserProfileRoute = UpdateUserProfileRoute.create(updateUserProfileUsecase, getSessionByIdUsecase, validator, crypto);
     const updateUserPictureRoute = UpdateUserPictureRoute.create(updateUserPictureUsecase, getSessionByIdUsecase, validator, upload);
 
-    const createTrackingRoute = CreateTrackingRoute.create(createTrackingUsecase, getSessionByIdUsecase, validator);
+    const createTrackingRoute = CreateTrackingRoute.create(createTrackingUsecase, getAllTrackingsUsecase, getSessionByIdUsecase, validator);
     const getTrackingByIdRoute = GetTrackingByIdRoute.create(getTrackingByIdUsecase, getSessionByIdUsecase);
     const getAllTrackingsRoute = GetTrackingsByUserIdRoute.create(getAllTrackingsUsecase, getSessionByIdUsecase);
-    const updateTrackingRoute = UpdateTrackingRoute.create(updateTrackingUsecase, getSessionByIdUsecase, validator);
+    const updateTrackingRoute = UpdateTrackingRoute.create(updateTrackingUsecase, getAllTrackingsUsecase, getSessionByIdUsecase, validator);
     const removeTrackingRoute = RemoveTrackingRoute.create(removeTrackingUsecase, getSessionByIdUsecase);
 
     const api = ApiExpress.create([

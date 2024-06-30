@@ -28,7 +28,7 @@ export class UserLogoutRoute implements IRoute {
                 res.status(200).send({ message: 'Successfuly logged out.' });
             } catch(e: any) {
                 let errorMessage = "Internal server error. Contact the support for more details.";
-                if(e.meta) errorMessage = e.meta.cause;
+                if(e.meta) return res.status(404).send({ message: e.meta.cause });
                 
                 res.status(500).send({ message: errorMessage });
             }

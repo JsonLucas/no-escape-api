@@ -24,17 +24,24 @@ export class RemoveTrackingRoute implements IRoute {
         return async (req: Request, res: Response) => {
             const { params } = req;
             
-            const sessionId = req.headers['x-session-id'];
-            if(!sessionId) return res.status(401).send({ message: 'You don\'t have permission to access this resource.' });
+            try {
+                const sessionId = req.headers['x-session-id'];
+                if(!sessionId) return res.status(401).send({ message: 'You don\'t have permission to access this resource.' });
 
-            const session = await this.getSessionService.execute({ id: sessionId.toString() });
-            if(!session.userId) return res.status(404).send({ message: 'Session not found.' });
+                const session = await this.getSessionService.execute({ id: sessionId.toString() });
+                if(!session.userId) return res.status(404).send({ message: 'Session not found.' });
 
-            if(!params.id || (params.id && isNaN(Number(params.id)))) return res.status(400).send({ message: 'You must to provide a valid tracking id.' });
+                if(!params.id || (params.id && isNaN(Number(params.id)))) return res.status(400).send({ message: 'You must to provide a valid tracking id.' });
 
-            const tracking = await this.removeTrackingService.execute({ id: Number(params.id) });
-
-            res.status(204).send({ message: 'Tracking successfuly deleted.' });
+                const tracking = await this.removeTrackingService.execute({ id: Number(params.id) });
+                res.status(204).send({ message: 'Tracking successfuly deleted.' });
+            } catch(e: any) {
+                console.log(e);
+                let errorMessage = "Internal server error. Contact the support for more details.";
+                if(e.meta) return res.status(404).send({ message: e.meta.cause });
+                
+                res.status(500).send({ message: errorMessage });
+            }
         };
     }
 
