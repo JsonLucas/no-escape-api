@@ -11,7 +11,7 @@ export class ApiExpress implements IApi {
         this.app = express();
         this.app.use(express.json());
         this.app.use(fileUpload());
-        this.app.use(cors({ origin: "*" }));
+        this.app.use(cors({ origin: "https://no-escape-alpha.vercel.app" }));
         this.addRoutes(routes);
     }
 
