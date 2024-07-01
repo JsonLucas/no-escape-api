@@ -33,7 +33,7 @@ export class RemoveTrackingRoute implements IRoute {
 
                 if(!params.id || (params.id && isNaN(Number(params.id)))) return res.status(400).send({ message: 'You must to provide a valid tracking id.' });
 
-                const tracking = await this.removeTrackingService.execute({ id: Number(params.id) });
+                await this.removeTrackingService.execute({ id: Number(params.id) });
                 res.status(204).send({ message: 'Tracking successfuly deleted.' });
             } catch(e: any) {
                 console.log(e);

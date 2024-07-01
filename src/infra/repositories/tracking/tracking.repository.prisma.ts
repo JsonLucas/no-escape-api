@@ -17,8 +17,7 @@ export class TrackingRepositoryPrisma implements ITrackingGateway {
     }
 
     public async remove(id: number): Promise<void> {
-        const a = await this.prisma.trackings.delete({ where: { id } });
-        console.log(a); //modificar isso depois
+        await this.prisma.trackings.delete({ where: { id } });
     }
 
     public async update(tracking: Tracking): Promise<void> {
